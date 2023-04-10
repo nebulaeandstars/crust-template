@@ -40,7 +40,7 @@ RUST_CRATES := $(shell basename $(RUST_DIR))
 
 RUST_SRCS := $(shell find $(RUST_CRATES) -regex ".*\.\(rs\|toml\)" 2>/dev/null)
 
-RUST_OBJS := $(RUST_CRATES:%=$(BUILD_DIR)/%.rs.so)
+RUST_OBJS := $(RUST_CRATES:%=$(BUILD_DIR)/%.rs.a)
 RUST_DS := $(RUST_CRATES:%=$(BUILD_DIR)/%.rs.d)
 
 CARGO_FLAGS := --release
@@ -80,8 +80,8 @@ $(BUILD_DIR)/%.rs.d: $(RUST_SRCS)
 	cp $(RUST_DIR)/target/release/*.d $@
 
 # Build .rs files
-$(BUILD_DIR)/%.rs.so: $(BUILD_DIR)/%.rs.d
-	cp $(RUST_DIR)/target/release/*.so $@
+$(BUILD_DIR)/%.rs.a: $(BUILD_DIR)/%.rs.d
+	cp $(RUST_DIR)/target/release/*.a $@
 
 # ----------------------------------------
 # Build Commands
