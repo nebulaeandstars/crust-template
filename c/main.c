@@ -1,9 +1,13 @@
-#include "hello.h"
 #include <stdio.h>
 
 extern void rust_main();
 extern void asm_example();
 extern void say_with_rust(char* s);
+
+void say(char* s)
+{
+    printf("%s", s);
+}
 
 int main()
 {
