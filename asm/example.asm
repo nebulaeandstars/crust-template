@@ -1,6 +1,5 @@
 extern say
 extern say_with_rust
-extern test_rust
 
 NULL equ 0
 NEWLINE equ 10
@@ -13,8 +12,13 @@ SECTION .text
     global asm_example
 
 asm_example:
+    ; make sure that the stack is aligned
+    push 0
+
     mov rdi, hello_c
     call say
+    mov rdi, hello_rs
+    call say_with_rust
 
-    call test_rust
+    pop rax
     ret
