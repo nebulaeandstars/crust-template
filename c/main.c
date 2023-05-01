@@ -1,14 +1,11 @@
 #include <stdio.h>
 #include "hello.h"
 
-extern void rust_hello();
-extern void rust_say(char* s);
+extern void run();
+extern void say_with_rust(char* s);
 
 int main() {
-    char* message = "hello from C!\n";
-    char* rust_message = "hello from C again, using Rust!\n";
-
-    say(message);
-    rust_hello();
-    rust_say(rust_message);
+    say("hello from C!\n");
+    run();
+    say_with_rust("hello from C again, using Rust!\n");
 }
