@@ -5,16 +5,19 @@ TARGET_EXEC := $(shell basename $(shell pwd))
 BUILD_DIR := ./build
 
 C_DIR := ./c
+CXX_DIR := ./c++
+ASM_DIR := ./asm
 RUST_DIR := ./rust
-SRC_DIRS := ./src ./lib $(C_DIR) $(C_DIR)/src $(C_DIR)/lib $(RUST_DIR)/src
 
-LDFLAGS := -L$(BUILD_DIR)
+SRC_DIRS := ./src ./lib $(C_DIR) $(CXX_DIR) $(ASM_DIR) $(RUST_DIR)/src
+
+LDFLAGS := -L$(BUILD_DIR) -no-pie -lc
 
 # ----------------------------------------
 # C/C++/ASM Config
 
 # All the files we want to compile
-SRCS := $(shell find $(SRC_DIRS) -regex ".*\.\(c\|s\|cpp\|S\)" 2>/dev/null)
+SRCS := $(shell find $(SRC_DIRS) -regex ".*\.\(c\|s\|cpp\|asm\|S\)" 2>/dev/null)
 
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
@@ -22,7 +25,9 @@ DEPS := $(OBJS:.o=.d)
 INC_DIRS := $(shell find $(SRC_DIRS) -type d 2>/dev/null)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-CPPFLAGS := $(INC_FLAGS) -MMD -MP
+CPPFLAGS := $(INC_FLAGS) -MMD -MP -fPIE
+
+ASMFLAGS := -f elf64
 
 # ----------------------------------------
 # Rust Config
@@ -61,11 +66,11 @@ $(BUILD_DIR)/%.cpp.o: %.cpp
 	mkdir -p $(dir $@)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
-# Build .S files
-$(BUILD_DIR)/%.S.o: %.S
+# Build .asm files
+$(BUILD_DIR)/%.asm.o: %.asm
 	mkdir -p $(dir $@)
-	$(CC) -c $< -o $@
-	BUILD_DIR
+	nasm $(ASMFLAGS) $< -o $@
+
 # ----------------------------------------
 # Rust Build
 

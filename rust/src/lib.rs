@@ -1,9 +1,18 @@
 use std::ffi::{CStr, CString};
 
 #[no_mangle]
-pub extern "C" fn run() {
+pub extern "C" fn test_rust() {
+    println!("calling Rust from asm")
+}
+
+#[no_mangle]
+pub extern "C" fn rust_main() {
     println!("hello from Rust!");
     say("hello from Rust again, using C!\n");
+
+    unsafe {
+        hello::asm_example();
+    }
 }
 
 #[no_mangle]
@@ -22,5 +31,9 @@ fn say(msg: impl AsRef<str>) {
 mod hello {
     extern "C" {
         pub fn say(s: *const i8);
+    }
+
+    extern "C" {
+        pub fn asm_example();
     }
 }
